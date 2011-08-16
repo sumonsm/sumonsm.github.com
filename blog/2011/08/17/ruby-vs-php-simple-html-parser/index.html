@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Sumon's Blog</title>
+  <title>Sumon's Blog: Ruby vs PHP: Simple Html Parser</title>
   <meta name="author" content="Sumon">
   
 
@@ -16,7 +16,7 @@
 
   
 
-  <link rel="canonical" href="http://sumonsm.github.com/index.html"/>
+  <link rel="canonical" href="http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/"/>
   <link href="/favicon.png" rel="shortcut icon" />
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -85,15 +85,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
-
-
-
-  <article>
-    
+      <div>
+<article class="hentry">
+  
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2011/08/17/ruby-vs-php-simple-html-parser/">Ruby vs PHP: Simple Html Parser</a></h1>
+      <h1 class="entry-title">Ruby vs PHP: Simple Html Parser</h1>
     
     
       <p class="meta">
@@ -109,7 +106,7 @@
   </header>
 
 
-  <div class="entry-content"><p>I like Ruby and Perl. And I try to stay away from PHP as much as possible. But I recently needed to write a simple HTML parser in PHP. The goal was to parse some data from an HTML file and put them in a CSV file (literally just values separated by comma, nothing fancy), cannot use any extra dependency and cannot trust the markup&#8217;s structure (i.e. gotta use Regular Expressions, no xpath or css selector magic). While writing the script, I kept thinking if I wrote it in Ruby, it would be one third in size (in terms of lines of code) and 10 times more elegant. Eventually I did write a version in Ruby. This is what this post is about.</p>
+<div class="entry-content"><p>I like Ruby and Perl. And I try to stay away from PHP as much as possible. But I recently needed to write a simple HTML parser in PHP. The goal was to parse some data from an HTML file and put them in a CSV file (literally just values separated by comma, nothing fancy), cannot use any extra dependency and cannot trust the markup&#8217;s structure (i.e. gotta use Regular Expressions, no xpath or css selector magic). While writing the script, I kept thinking if I wrote it in Ruby, it would be one third in size (in terms of lines of code) and 10 times more elegant. Eventually I did write a version in Ruby. This is what this post is about.</p>
 
 <p>If you are a PHP fan, please don&#8217;t be offended. PHP has its strengths elsewhere, but it makes things unnecessarily cumbersome for simple tasks like text manipulation and data juggling. This is actually a very strong side of Ruby. Easy regexing, method chaining and mutable string/object makes ruby a really powerful tool for text processing. And all these without giving up readability. Actually everything is mutable in Ruby, including core classes. You can open up any class/module and put it back together. You can make string act like arrays and an arrays act like integers, if you have that kind of inclinations :D. But I am not getting into details about that in this post. Happy coding.</p>
 
@@ -258,62 +255,68 @@ exit 0;
 
 
 </div>
+
+
   <footer>
-    <a rel="full-article" href="/blog/2011/08/17/ruby-vs-php-simple-html-parser/">Read on &rarr;</a>
-  </footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Sumon</span></span>
+
+      
 
 
-  </article>
 
 
-  <article>
+<time datetime="2011-08-17 01:37:00 +0600" pubdate  updated >Aug 17<span>th</span>, 2011</time>
+
+
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/Code/'>Code</a>, <a class='category' href='/blog/categories/PHP/'>PHP</a>, <a class='category' href='/blog/categories/Parser/'>Parser</a>, <a class='category' href='/blog/categories/Ruby/'>Ruby</a>
+  
+</span>
+
+
+    </p>
     
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/08/11/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-
-
-
-
-<time datetime="2011-08-11 19:40:00 +0600" pubdate  updated >Aug 11<span>th</span>, 2011</time>
-
-
-</p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This is the first post of this blog. Powered by Jekyll, Octopress, Github Pages, Git and Ruby hacks. Hop onboard.</p>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/" data-via="" data-counturl="http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/" >Tweet</a>
+  
+  
+  <g:plusone size="medium"></g:plusone>
+  
 </div>
-  <footer>
-    <a rel="full-article" href="/blog/2011/08/11/hello-world/">Read on &rarr;</a>
+
+    
   </footer>
+</article>
 
-
-  </article>
-
-<nav role="pagination">
-  <div>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</nav>
-
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread"><div id="disqus_thread"></div>
 <script type="text/javascript">
-    var disqus_shortname = 'sumonsmblog';
-    (function () {
-      var s = document.createElement('script'); s.async = true;
-      s.type = 'text/javascript';
-      s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
-      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
+  var disqus_shortname = 'sumonsmblog';
+  var disqus_identifier = 'http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/';
+  var disqus_url = 'http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/';
+  //var disqus_developer = 1;
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
 </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
+
 <aside role=sidebar>
   
     <section>
@@ -336,6 +339,7 @@ exit 0;
 
   
 </aside>
+
 
     </div>
   </div>

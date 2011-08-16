@@ -4,13 +4,171 @@
   <title>Sumon's Blog</title>
   <link href="http://sumonsm.github.com/atom.xml" rel="self"/>
   <link href="http://sumonsm.github.com/"/>
-  <updated>2011-08-11T20:41:25+06:00</updated>
+  <updated>2011-08-17T02:55:25+06:00</updated>
   <id>http://sumonsm.github.com/</id>
   <author>
     <name>Sumon</name>
     
   </author>
 
+  
+  <entry>
+    <title>Ruby vs PHP: Simple Html Parser</title>
+    <link href="http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser/"/>
+    <updated>2011-08-17T01:37:00+06:00</updated>
+    <id>http://sumonsm.github.com/blog/2011/08/17/ruby-vs-php-simple-html-parser</id>
+    <content type="html">&lt;p&gt;I like Ruby and Perl. And I try to stay away from PHP as much as possible. But I recently needed to write a simple HTML parser in PHP. The goal was to parse some data from an HTML file and put them in a CSV file (literally just values separated by comma, nothing fancy), cannot use any extra dependency and cannot trust the markup's structure (i.e. gotta use Regular Expressions, no xpath or css selector magic). While writing the script, I kept thinking if I wrote it in Ruby, it would be one third in size (in terms of lines of code) and 10 times more elegant. Eventually I did write a version in Ruby. This is what this post is about.&lt;/p&gt;
+
+&lt;p&gt;If you are a PHP fan, please don't be offended. PHP has its strengths elsewhere, but it makes things unnecessarily cumbersome for simple tasks like text manipulation and data juggling. This is actually a very strong side of Ruby. Easy regexing, method chaining and mutable string/object makes ruby a really powerful tool for text processing. And all these without giving up readability. Actually everything is mutable in Ruby, including core classes. You can open up any class/module and put it back together. You can make string act like arrays and an arrays act like integers, if you have that kind of inclinations :D. But I am not getting into details about that in this post. Happy coding.&lt;/p&gt;
+
+&lt;p&gt;Lets examine the actual codes. The scripts are meant to run like this:&lt;/p&gt;
+
+&lt;p&gt;``` sh&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./script.php infile.html outfile.csv
+./script.rb infile.html outfile.csv
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;```&lt;/p&gt;
+
+&lt;p&gt;Example output looks like this (one line of CSV file):&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;123 Some Road,Sometown,12345&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;So we are taking 3 data strings from the html markups. Throwing away *, extra spaces from all and extra digits from the zipcode. Also need to consistently titlize all the words.&lt;/p&gt;
+
+&lt;p&gt;PHP version of the parser:&lt;/p&gt;
+
+&lt;div&gt;&lt;script src='https://gist.github.com/1150083.js?file=parser.php'&gt;&lt;/script&gt;
+&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;#!/usr/bin/php
+&amp;lt;?php
+/*
+        Author: Sumon SM &amp;lt;sumonsm00@gmail.com&amp;gt;
+Release Vesion: 1.0
+  Release Date: 16-August-2011
+*/
+
+    $input_file  = $argv[1] ? $argv[1] : &amp;quot;test.html&amp;quot;;
+    $output_file = $argv[2] ? $argv[2] : &amp;quot;output.csv&amp;quot;;
+
+    print &amp;quot;Reading HTML text from file: &amp;quot;. $input_file.&amp;quot;\n&amp;quot;;
+    print &amp;quot; Writing CSV output to file: &amp;quot;. $output_file.&amp;quot;\n&amp;quot;;
+
+    function loadFile($sFilename, $sCharset = 'UTF-8')
+    {
+        if (floatval(phpversion()) &amp;gt;= 4.3) {
+            $sData = file_get_contents($sFilename);
+        } else {
+            if (!file_exists($sFilename)) return -3;
+            $rHandle = fopen($sFilename, 'r');
+            if (!$rHandle) return -2;
+
+            $sData = '';
+            while(!feof($rHandle))
+                $sData .= fread($rHandle, filesize($sFilename));
+            fclose($rHandle);
+        }
+        if ($sEncoding = mb_detect_encoding($sData, 'auto', true) != $sCharset)
+            $sData = mb_convert_encoding($sData, $sCharset, $sEncoding);
+        return $sData;
+    }
+
+    function writeFile($filename = &amp;quot;output.txt&amp;quot;, $somecontent = &amp;quot;&amp;quot;)
+    {
+        if (!$handle = fopen($filename, 'w')) {
+            echo &amp;quot;Cannot open file ($filename)&amp;quot;;
+            exit;
+        }
+
+        // Write $somecontent to our opened file.
+        if (fwrite($handle, $somecontent) === FALSE) {
+            echo &amp;quot;Cannot write to file ($filename)&amp;quot;;
+            exit;
+        }
+
+        fclose($handle);
+    }
+
+
+    $input_content = @loadFile($input_file, 'UTF-8');
+    // print $input_content.&amp;quot;\n&amp;quot;;
+    $output_str = &amp;quot;&amp;quot;;
+
+    /*
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;&amp;lt;a
+ href=&amp;quot;javascript:MapMlsNum('3524604','Res')&amp;quot;&amp;gt;1136 Some Road &amp;lt;/a&amp;gt;&amp;amp;nbsp;&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;Sometown*&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;43041-4524*&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td align=&amp;quot;right&amp;quot;&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;LP:&amp;amp;nbsp;$901,000&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    */
+    while (preg_match(&amp;quot;/:MapMlsNum[^&amp;gt;]+&amp;gt;([^&amp;lt;]+)&amp;lt;\/a&amp;gt;.*?&amp;lt;\/font&amp;gt;.*?([^&amp;lt;&amp;gt;]+)&amp;lt;\/font&amp;gt;.*?([^&amp;lt;&amp;gt;]+)&amp;lt;\/font&amp;gt;(.*)/is&amp;quot;, $input_content, $matches)) {
+        $street = $matches[1];
+        $town = $matches[2];
+        $zip = $matches[3];
+
+        // process parsed data
+        $street = preg_replace(&amp;quot;/[\s]$/is&amp;quot;, '', $street);
+        $town   = preg_replace(&amp;quot;/[\*]$/is&amp;quot;, '', $town);
+        $zip    = preg_replace(&amp;quot;/\-\d+\*$/is&amp;quot;, '', $zip);
+
+        $street = ucwords(strtolower($street));
+        $town = ucwords(strtolower($town));
+        $zip = ucwords(strtolower($zip));
+
+        $csv_row = ''. join(array($street, $town, $zip), ',') .''.&amp;quot;\n&amp;quot;;
+        $output_str .= $csv_row;
+
+        // print rows if optional third argument is present and true. 0 or &amp;quot;&amp;quot; will mean false
+        if(@$argv[3]){ echo $csv_row; }
+
+        // manage string for next iteration
+        $input_content = $matches[4];
+    }
+    writeFile($output_file, $output_str);
+    exit;
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ruby version of the parser:&lt;/p&gt;
+
+&lt;div&gt;&lt;script src='https://gist.github.com/1150083.js?file=parser.rb'&gt;&lt;/script&gt;
+&lt;noscript&gt;&lt;pre&gt;&lt;code&gt;#!/usr/bin/env ruby
+####################################################
+#          Author: Sumon SM &amp;lt;sumonsm00@gmail.com&amp;gt;
+#  Release Vesion: 1.0
+#    Release Date: 16-August-2011
+####################################################
+@input_file = ARGV[0] || &amp;quot;test.htm&amp;quot;
+@output_file = ARGV[1] || &amp;quot;output.csv&amp;quot;
+
+## HTML snippet that contains one set of data, for reference
+=begin
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;&amp;lt;a
+ href=&amp;quot;javascript:MapMlsNum('3524604','Res')&amp;quot;&amp;gt;1136 Some Road &amp;lt;/a&amp;gt;&amp;amp;nbsp;&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;Sometown*&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;43041-4524*&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+    &amp;lt;td align=&amp;quot;right&amp;quot;&amp;gt;&amp;lt;font class=&amp;quot;label&amp;quot;&amp;gt;LP:&amp;amp;nbsp;$901,000&amp;lt;/font&amp;gt;&amp;lt;/td&amp;gt;
+=end
+@regex = Regexp.new(/:MapMlsNum[^&amp;gt;]+&amp;gt;([^&amp;lt;]+)&amp;lt;\/a&amp;gt;.*?&amp;lt;\/font&amp;gt;.*?([^&amp;lt;&amp;gt;]+)&amp;lt;\/font&amp;gt;.*?([^&amp;lt;&amp;gt;]+)&amp;lt;\/font&amp;gt;/is);
+@rows = []
+@content = File.open(@input_file, &amp;quot;r&amp;quot;) {|f| f.read}
+
+## grab items and put in array @rows
+@content.gsub(/\n/, ' ').scan(@regex).each{ |a, b, c|  @rows &amp;lt;&amp;lt; [a, b, c]}
+
+## process items in @rows and copy to @new_rows
+@new_rows = @rows.map{|a,b,c| [a, b, c].map{|x| x.downcase.gsub(/([\*\s]|\-[\d\*]+)$/,&amp;quot;&amp;quot;).split(' ').each{|word|word.capitalize!}.join(' ')}}
+
+@csv_str = @new_rows.map{|a,b,c| [a, b, c].join(&amp;quot;,&amp;quot;) &amp;lt;&amp;lt; &amp;quot;\n&amp;quot;}
+File.open(@output_file, &amp;quot;w&amp;quot;) {|f| f &amp;lt;&amp;lt; @csv_str}
+exit 0;
+&lt;/code&gt;&lt;/pre&gt;&lt;/noscript&gt;&lt;/div&gt;
+
+
+
+</content>
+  </entry>
   
   <entry>
     <title>Hello World</title>
